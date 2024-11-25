@@ -1,0 +1,14 @@
+.mainContainer {
+    margin: auto;
+    width: 500px;
+}
+
+
+
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}

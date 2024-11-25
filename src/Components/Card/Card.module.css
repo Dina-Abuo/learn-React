@@ -1,0 +1,27 @@
+.cardContainer {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.deleteButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.deleteButton p {
+    color: white;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 3px;
+}
