@@ -1,23 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import usePrevState from "../../Hooks/usePrevState";
 
 export default function InputSearchAndTable() {
   const [term, setTerm] = useState("react");
-  const [debounceSearch, setDebounceSearch] = useState(term);
+  // const [debounceSearch, setDebounceSearch] = useState(term);
   const [result, setResult] = useState([]);
-  const prevTermState = useRef();
-  useEffect(() => {
-    prevTermState.current = term;
-  });
-  const prevTerm = prevTermState.current;
-
-  // fix debounce api issue by multi useEffect
-  useEffect(() => {
-    const timeOut = setTimeout(() => {
-      setDebounceSearch(term);
-    }, 1200);
-    clearTimeout(timeOut);
-  }, [term]);
+  const prevTerm = usePrevState(term);
 
   useEffect(() => {
     const search = async () => {
@@ -27,13 +16,59 @@ export default function InputSearchAndTable() {
           list: "search",
           origin: "*",
           format: "json",
-          srsearch: debounceSearch,
+          srsearch: term,
         },
       });
       setResult(respond.data.query.search);
     };
-    search();
-  }, [debounceSearch]);
+
+    if (!result.length) {
+      if (term) {
+        search();
+      }
+    } else if (prevTerm !== term) {
+      const debounceSearch = setTimeout(() => {
+        if (term) {
+          search();
+        }
+      }, 1500);
+      clearTimeout(debounceSearch);
+    }
+  }, [term, result, prevTerm]);
+
+  // ///////////////////////////////////////////////////////
+
+  // const prevTermState = useRef();
+  // useEffect(() => {
+  //   prevTermState.current = term;
+  // });
+  // const prevTerm = prevTermState.current;
+
+  // fix debounce api issue by multi useEffect
+  // useEffect(() => {
+  //   const timeOut = setTimeout(() => {
+  //     setDebounceSearch(term);
+  //   }, 1200);
+  //   clearTimeout(timeOut);
+  // }, [term]);
+
+  // useEffect(() => {
+  //   const search = async () => {
+  //     const respond = await axios.get("https://en.wikipedia.org/w/api.php", {
+  //       params: {
+  //         action: "query",
+  //         list: "search",
+  //         origin: "*",
+  //         format: "json",
+  //         srsearch: debounceSearch,
+  //       },
+  //     });
+  //     setResult(respond.data.query.search);
+  //   };
+  //   search();
+  // }, [debounceSearch]);
+
+  // ////////////////////////////////////////////////////////////////////////////////////////
 
   // useEffect(() => {
   //   const search = async () => {
@@ -88,9 +123,9 @@ export default function InputSearchAndTable() {
               onChange={(e) => setTerm(e.target.value)}
             />
 
-            <p>
+            {/* <p>
               current Term : {term} <br /> prev Term :{prevTerm}
-            </p>
+            </p> */}
 
             <table className="table">
               <thead>
